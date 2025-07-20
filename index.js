@@ -1,16 +1,5 @@
-// 🌐 KEEP-ALIVE SECTION
-const express = require('express');
-const app = express();
+// Your keep-alive Express stuff stays the same...
 
-app.get('/', (req, res) => {
-  res.send('Bot is alive!');
-});
-
-app.listen(3000, () => {
-  console.log('✅ Keep-alive server running');
-});
-
-// 🤖 DISCORD BOT SETUP
 require('dotenv').config();
 const { Client, GatewayIntentBits, ActionRowBuilder, StringSelectMenuBuilder, Events } = require('discord.js');
 
@@ -42,6 +31,7 @@ client.once(Events.ClientReady, () => {
 });
 
 client.on(Events.InteractionCreate, async interaction => {
+  // Handle slash commands
   if (interaction.isChatInputCommand()) {
     if (interaction.commandName === 'scripts') {
       if (interaction.channelId !== '1396029407860228167') {
@@ -62,7 +52,52 @@ client.on(Events.InteractionCreate, async interaction => {
       const row = new ActionRowBuilder().addComponents(menu);
       await interaction.reply({ content: 'Pick a script:', components: [row], ephemeral: true });
     }
-  } else if (interaction.isStringSelectMenu()) {
+
+    else if (interaction.commandName === 'ask') {
+      const question = interaction.options.getString('question').toLowerCase();
+
+      let answer;
+
+      if (question.includes('start') || question.includes('beginner')) {
+        answer = `To start reselling, begin by researching popular items in your niche. Use platforms like eBay, Poshmark, or Facebook Marketplace. Start small, learn how to list effectively, and focus on customer service.`;
+      } 
+      else if (question.includes('shipping') || question.includes('ship')) {
+        answer = `Shipping is key! Always use tracked shipping to protect yourself and your buyers. Pack items securely to avoid damage, and consider offering free shipping as a selling point.`;
+      } 
+      else if (question.includes('profit') || question.includes('make money') || question.includes('earn')) {
+        answer = `Profit comes down to buying low and selling high. Factor in fees, shipping, taxes, and your time. Use pricing research tools to find good deals and avoid overpaying.`;
+      } 
+      else if (question.includes('best items') || question.includes('popular items') || question.includes('what to sell')) {
+        answer = `Popular reselling items include branded sneakers, electronics, collectibles, vintage clothing, and limited-edition items. Keep an eye on trends and what's in demand.`;
+      } 
+      else if (question.includes('platforms') || question.includes('where to sell')) {
+        answer = `Great platforms to sell on include eBay, Poshmark, Depop, Facebook Marketplace, and Mercari. Choose based on your item type and audience.`;
+      }
+      else if (question.includes('fees') || question.includes('costs')) {
+        answer = `Every platform charges fees — eBay, for example, takes about 10-12% of the sale. Always factor these fees into your pricing so you don't lose money.`;
+      }
+      else if (question.includes('scams') || question.includes('fraud')) {
+        answer = `Beware of scams! Only accept payments through secure methods offered by the platform, and never ship before payment clears. Communicate clearly with buyers.`;
+      }
+      else if (question.includes('tax') || question.includes('taxes')) {
+        answer = `Depending on your country, reselling income might be taxable. Keep good records of your sales and expenses, and check local tax laws or consult a professional.`;
+      }
+      else if (question.includes('returns') || question.includes('refund')) {
+        answer = `Have a clear returns policy. Decide if you accept returns or refunds and communicate it clearly to avoid disputes. Good customer service builds trust.`;
+      }
+      else if (question.includes('inventory') || question.includes('stock')) {
+        answer = `Manage your inventory carefully. Keep track of what you have, what’s sold, and reorder popular items to avoid running out.`;
+      }
+      else {
+        answer = "Sorry, I don't have an answer for that yet. Try asking about starting, shipping, profit, best items, platforms, fees, scams, taxes, or returns!";
+      }
+
+      await interaction.reply(`❓ You asked: **${question}**\n💡 Here's my reselling advice:\n${answer}`);
+    }
+  } 
+
+  // Handle dropdown select menu for scripts
+  else if (interaction.isStringSelectMenu()) {
     const selected = interaction.values[0];
     const script = scripts[selected];
     if (script) {
@@ -73,4 +108,3 @@ client.on(Events.InteractionCreate, async interaction => {
 });
 
 client.login(process.env.TOKEN);
-
